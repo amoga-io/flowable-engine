@@ -11,6 +11,7 @@ package org.flowable.ui.application;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import com.nimbusds.jose.shaded.json.JSONObject;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.flowable.engine.delegate.TaskListener;
 import org.flowable.task.service.delegate.DelegateTask;
@@ -28,7 +29,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class CDTaskListener
-  implements TaskListener
+        implements TaskListener
 {
   public ProducerFactory<String, String> producerFactory()
   {
@@ -94,15 +95,15 @@ public class CDTaskListener
       if ("delete".equalsIgnoreCase(delegateTask.getEventName())) {
         delegateTask.setVariable(category + "__status", "task_completed");
       }
-      String event = "{\n" +
-              "    \"task\":\"" + delegateTask.getTaskDefinitionKey() + "\",\n" +
-              "    \"task_id\":\"" + delegateTask.getId() + "\",\n" +
-              "    \"process\":\"" + delegateTask.getProcessDefinitionId() + "\",\n" +
-              "    \"tenantId\":\"" + delegateTask.getTenantId() + "\",\n" +
-              "    \"processId\":\"" + delegateTask.getProcessInstanceId() + "\",\n" +
-              "    \"variables\":\"" + delegateTask.getVariables() + "\",\n" +
-              "    \"assignee\":\"" + delegateTask.getAssignee() + "\",\n" +
-              "    \"event\":\"" + delegateTask.getEventName() + "\"\n" +
+      String event = "{" +
+              "    \"task\":\"" + delegateTask.getTaskDefinitionKey() + "\"," +
+              "    \"task_id\":\"" + delegateTask.getId() + "\"," +
+              "    \"process\":\"" + delegateTask.getProcessDefinitionId() + "\"," +
+              "    \"tenantId\":\"" + delegateTask.getTenantId() + "\"," +
+              "    \"processId\":\"" + delegateTask.getProcessInstanceId() + "\"," +
+              "    \"variables\":" + new JSONObject(delegateTask.getVariables()).toJSONString() + "," +
+              "    \"assignee\":\"" + delegateTask.getAssignee() + "\"," +
+              "    \"event\":\"" + delegateTask.getEventName() + "\"" +
               "}";
 
       kafkaTemplate().send("amoga-task-assignment-topic", event);
