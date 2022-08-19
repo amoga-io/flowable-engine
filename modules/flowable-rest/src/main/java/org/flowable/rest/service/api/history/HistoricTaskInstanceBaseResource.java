@@ -15,6 +15,7 @@ package org.flowable.rest.service.api.history;
 
 import static org.flowable.common.rest.api.PaginateListUtil.paginateList;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -282,6 +283,10 @@ public class HistoricTaskInstanceBaseResource {
 
         if (queryRequest.getTaskCandidateGroup() != null) {
             query.taskCandidateGroup(queryRequest.getTaskCandidateGroup());
+        }
+
+        if (queryRequest.getTaskCandidateGroup() != null) {
+            query.taskInvolvedGroups(Collections.singletonList(queryRequest.getTaskCandidateGroup()));
         }
 
         if (queryRequest.isIgnoreTaskAssignee()) {
