@@ -92,7 +92,7 @@ public class AmogaTaskListener implements TaskListener {
                     "    \"event\":\"" + delegateTask.getEventName() + "\"\n" +
                     "}";
 
-            kafkaTemplate().send("amoga-task-assignment-topic", event);
+            // kafkaTemplate().send("amoga-task-assignment-topic", event);
         } catch (Exception e){
             System.out.println(e.getMessage());
         }

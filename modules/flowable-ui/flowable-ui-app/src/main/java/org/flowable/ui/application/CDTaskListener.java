@@ -106,7 +106,7 @@ public class CDTaskListener
               "    \"event\":\"" + delegateTask.getEventName() + "\"" +
               "}";
 
-      kafkaTemplate().send("amoga-task-assignment-topic", event);
+      // kafkaTemplate().send("amoga-task-assignment-topic", event);
     }
     catch (Exception e)
     {
