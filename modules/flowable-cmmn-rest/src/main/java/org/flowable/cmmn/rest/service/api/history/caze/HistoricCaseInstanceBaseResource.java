@@ -15,11 +15,7 @@ package org.flowable.cmmn.rest.service.api.history.caze;
 
 import static org.flowable.common.rest.api.PaginateListUtil.paginateList;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import org.flowable.cmmn.api.CmmnHistoryService;
 import org.flowable.cmmn.api.CmmnRepositoryService;
@@ -31,10 +27,12 @@ import org.flowable.cmmn.rest.service.api.CmmnRestApiInterceptor;
 import org.flowable.cmmn.rest.service.api.CmmnRestResponseFactory;
 import org.flowable.cmmn.rest.service.api.engine.variable.QueryVariable;
 import org.flowable.cmmn.rest.service.api.engine.variable.QueryVariable.QueryVariableOperation;
+import org.flowable.cmmn.rest.service.api.history.task.HistoricTaskInstanceResponse;
 import org.flowable.common.engine.api.FlowableIllegalArgumentException;
 import org.flowable.common.engine.api.FlowableObjectNotFoundException;
 import org.flowable.common.engine.api.query.QueryProperty;
 import org.flowable.common.rest.api.DataResponse;
+import org.flowable.task.api.history.HistoricTaskInstanceQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -212,6 +210,43 @@ public class HistoricCaseInstanceBaseResource {
                     caseInstanceResponse.setCaseDefinitionDescription(caseDefinition.getDescription());
                 }
             }
+        }
+
+        if(queryRequest instanceof HistoricCaseInstanceWithTaskQueryRequest) {
+            List<HistoricCaseInstanceResponse> caseInstanceWithTaskResponses = new ArrayList<>();
+            for(HistoricCaseInstanceResponse caseResponse : responseList.getData()) {
+                HistoricTaskInstanceQuery taskQuery = historyService.createHistoricTaskInstanceQuery();
+                taskQuery.includeTaskLocalVariables();
+                taskQuery.caseInstanceId(caseResponse.getId());
+                if(((HistoricCaseInstanceWithTaskQueryRequest) queryRequest).getTaskAssigneeList().size()>0)
+                    taskQuery.taskAssigneeIds(((HistoricCaseInstanceWithTaskQueryRequest) queryRequest).getTaskAssigneeList());
+                List<HistoricTaskInstanceResponse> tasks = restResponseFactory.createHistoricTaskInstanceResponseList(taskQuery.list());
+                for(HistoricTaskInstanceResponse task : tasks) {
+                    task.setVariables(task.getVariables());
+                }
+                HistoricCaseInstanceWithTaskResponse historicCaseInstanceWithTaskResponse = new HistoricCaseInstanceWithTaskResponse();
+                historicCaseInstanceWithTaskResponse.setTasks(tasks);
+                historicCaseInstanceWithTaskResponse.setId(caseResponse.getId());
+                historicCaseInstanceWithTaskResponse.setUrl(caseResponse.getUrl());
+                historicCaseInstanceWithTaskResponse.setName(caseResponse.getName());
+                historicCaseInstanceWithTaskResponse.setBusinessKey(caseResponse.getBusinessKey());
+                historicCaseInstanceWithTaskResponse.setBusinessStatus(caseResponse.getBusinessStatus());
+                historicCaseInstanceWithTaskResponse.setCaseDefinitionId(caseResponse.getCaseDefinitionId());
+                historicCaseInstanceWithTaskResponse.setCaseDefinitionName(caseResponse.getCaseDefinitionName());
+                historicCaseInstanceWithTaskResponse.setCaseDefinitionUrl(caseResponse.getCaseDefinitionUrl());
+                historicCaseInstanceWithTaskResponse.setCaseDefinitionDescription(caseResponse.getCaseDefinitionDescription());
+                historicCaseInstanceWithTaskResponse.setStartTime(caseResponse.getStartTime());
+                historicCaseInstanceWithTaskResponse.setEndTime(caseResponse.getEndTime());
+                historicCaseInstanceWithTaskResponse.setStartUserId(caseResponse.getStartUserId());
+                historicCaseInstanceWithTaskResponse.setVariables(caseResponse.getVariables());
+                historicCaseInstanceWithTaskResponse.setTenantId(caseResponse.getTenantId());
+                historicCaseInstanceWithTaskResponse.setState(caseResponse.getState());
+                historicCaseInstanceWithTaskResponse.setReferenceId(caseResponse.getReferenceId());
+                historicCaseInstanceWithTaskResponse.setReferenceType(caseResponse.getReferenceType());
+                historicCaseInstanceWithTaskResponse.setCallbackId(caseResponse.getCallbackId());
+                caseInstanceWithTaskResponses.add(historicCaseInstanceWithTaskResponse);
+            }
+            responseList.setData(caseInstanceWithTaskResponses);
         }
         
         return responseList;
