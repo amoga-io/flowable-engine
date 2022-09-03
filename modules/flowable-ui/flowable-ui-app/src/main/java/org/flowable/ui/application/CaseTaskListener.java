@@ -27,8 +27,10 @@ public class CaseTaskListener implements TaskListener {
             if ("complete".equalsIgnoreCase(delegateTask.getEventName()))
             {
                 for (VariableInstance variable : delegateTask.getVariableInstances().values()) {
-                    if (variable.getName().equals("_outcome")) {
+                    if ("_outcome".equals(variable.getName())) {
                         delegateTask.setVariableLocal("amoTaskLocal_" + delegateTask.getTaskDefinitionKey() + "__status", variable
+                                .getValue());
+                        delegateTask.setVariable(delegateTask.getTaskDefinitionKey() + "__status", variable
                                 .getValue());
                     } else {
                         delegateTask.setVariableLocal("amoTaskLocal_" + variable

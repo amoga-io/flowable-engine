@@ -20,6 +20,16 @@ public class MailTask implements JavaDelegate {
     private FixedValue cc;
     private FixedValue bcc;
 
+    private FixedValue mailTemplate;
+
+    public FixedValue getMailTemplate() {
+        return mailTemplate;
+    }
+
+    public void setMailTemplate(FixedValue mailTemplate) {
+        this.mailTemplate = mailTemplate;
+    }
+
     public FixedValue getBody() {
         return body;
     }
@@ -76,6 +86,6 @@ public class MailTask implements JavaDelegate {
             }
             sentToArray.add(to.trim());
         }
-        mailService.sendEmail((String[]) sentToArray.toArray(),mailHeader,mailBody);
+        mailService.sendEmail(sentToArray.toArray(),mailHeader,mailBody);
     }
 }

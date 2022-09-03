@@ -24,11 +24,11 @@ public class AmogaLifecycleListener implements PlanItemInstanceLifecycleListener
         System.out.println(planItemInstance);
         if ("active".equals(newState) && "available".equals(oldState)) {
             String event = "{" +
-                    "    \"id\":\"" + planItemInstance.getCaseInstanceId() + "\"," +
-                    "    \"task_type\":\"" + planItemInstance.getName() + "\"," +
-                    "    \"tenantId\":\"" + planItemInstance.getTenantId() + "\"," +
-                    "    \"variables\":" + new JSONObject(planItemInstance.getVariables()).toJSONString() + "," +
-                    "    \"event\":\" create \"" +
+                    "\"id\":\"" + planItemInstance.getCaseInstanceId() + "\"," +
+                    "\"task_type\":\"" + planItemInstance.getName() + "\"," +
+                    "\"tenantId\":\"" + planItemInstance.getTenantId() + "\"," +
+                    "\"variables\":" + new JSONObject(planItemInstance.getVariables()).toJSONString() + "," +
+                    "\"event\":\" create \"" +
                     "}";
 
             kafkaService.kafkaTemplate().send("amoga-task-event-topic", event);

@@ -13,14 +13,14 @@ public class KafkaEventListener implements TaskListener{
         String parentId = (delegateTask.getProcessInstanceId() != null) ? delegateTask.getProcessInstanceId() : ((TaskEntityImpl) delegateTask).getScopeId();
         try {
             String event = "{" +
-                    "    \"id\":\"" + delegateTask.getId() + "\"," +
-                    "    \"priority\":\"" + delegateTask.getPriority() + "\"," +
-                    "    \"task_type\":\"" + delegateTask.getTaskDefinitionKey() + "\"," +
-                    "    \"tenantId\":\"" + delegateTask.getTenantId() + "\"," +
-                    "    \"parent_id\":\"" + parentId + "\"," +
-                    "    \"variables\":" + new JSONObject(delegateTask.getVariables()).toJSONString() + "," +
-                    "    \"assignee\":\"" + delegateTask.getAssignee() + "\"," +
-                    "    \"event\":\"" + delegateTask.getEventName() + "\"" +
+                    "\"id\":\"" + delegateTask.getId() + "\"," +
+                    "\"priority\":\"" + delegateTask.getPriority() + "\"," +
+                    "\"task_type\":\"" + delegateTask.getTaskDefinitionKey() + "\"," +
+                    "\"tenantId\":\"" + delegateTask.getTenantId() + "\"," +
+                    "\"parent_id\":\"" + parentId + "\"," +
+                    "\"variables\":" + new JSONObject(delegateTask.getVariables()).toJSONString() + "," +
+                    "\"assignee\":\"" + delegateTask.getAssignee() + "\"," +
+                    "\"event\":\"" + delegateTask.getEventName() + "\"" +
                     "}";
 
             kafkaService.kafkaTemplate().send("amoga-task-event-topic", event);
