@@ -7,7 +7,9 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -15,9 +17,11 @@ public class KafkaService {
 
     private ProducerFactory<String, String> producerFactory() {
         Map<String, Object> configProps = new HashMap<>();
+        List<String> servers = new ArrayList<>();
+        servers.add("20.244.13.46:9093");
+        servers.add("20.244.13.46:9092");
         configProps.put(
-                ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,
-                "20.40.60.96:9092");
+                ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,servers);
         configProps.put(
                 ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,
                 StringSerializer.class);
