@@ -25,7 +25,7 @@ public class KafkaEventListener implements TaskListener{
                     "\"event\":\"" + delegateTask.getEventName() + "\"" +
                     "}";
 
-            kafkaService.kafkaTemplate().send("amoga-task-event-topic", event);
+                kafkaService.kafkaTemplate().send("amoga-task-event-topic",parentId, event);
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
