@@ -17,13 +17,15 @@ public class KafkaEventListener implements TaskListener{
                     "\"priority\":\"" + delegateTask.getPriority() + "\"," +
                     "\"task_type\":\"" + delegateTask.getTaskDefinitionKey() + "\"," +
                     "\"tenantId\":\"" + delegateTask.getTenantId() + "\"," +
+                    "\"dueDate\":\"" + delegateTask.getDueDate() + "\"," +
+                    "\"name\":\"" + delegateTask.getName() + "\"," +
                     "\"parent_id\":\"" + parentId + "\"," +
                     "\"variables\":" + new JSONObject(delegateTask.getVariables()).toJSONString() + "," +
                     "\"assignee\":\"" + delegateTask.getAssignee() + "\"," +
                     "\"event\":\"" + delegateTask.getEventName() + "\"" +
                     "}";
 
-            kafkaService.kafkaTemplate().send("amoga-task-event-topic", event);
+                kafkaService.kafkaTemplate().send("amoga-task-event-topic",parentId, event);
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }

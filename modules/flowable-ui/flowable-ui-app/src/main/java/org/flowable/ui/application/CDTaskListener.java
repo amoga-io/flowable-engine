@@ -84,6 +84,7 @@ public class CDTaskListener
               .getName(), variable.getValue());
           }
         }
+        delegateTask.setVariableLocal("isCompleted","true");
       }
       if ("create".equalsIgnoreCase(delegateTask.getEventName())) {
         delegateTask.setVariable("_status", "toDo");
@@ -93,7 +94,13 @@ public class CDTaskListener
         sendEmail(delegateTask);
       }
       if ("delete".equalsIgnoreCase(delegateTask.getEventName())) {
-        delegateTask.setVariable(category + "__status", "task_completed");
+        try {
+          String taskStatus = (String) delegateTask.getVariable("isCompleted");
+          if (taskStatus == null)
+            delegateTask.setVariableLocal("amoTaskLocal_" + category + "__status", "customerNotInterested");
+        } catch (Exception e) {
+          System.out.println(e.getMessage());
+        }
       }
       String event = "{" +
               "    \"task\":\"" + delegateTask.getTaskDefinitionKey() + "\"," +

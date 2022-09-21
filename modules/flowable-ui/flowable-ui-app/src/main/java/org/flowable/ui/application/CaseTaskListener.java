@@ -38,6 +38,10 @@ public class CaseTaskListener implements TaskListener {
                     }
                 }
             }
+            if ("create".equalsIgnoreCase(delegateTask.getEventName()))
+            {
+                delegateTask.setVariable(delegateTask.getTaskDefinitionKey() + "__status", "toDo");
+            }
         } catch (Exception e){
                 System.out.println(e.getMessage());
             }
