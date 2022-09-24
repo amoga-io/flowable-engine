@@ -15,6 +15,7 @@ import java.util.Map;
 @Service
 public class KafkaService {
 
+    private ProducerFactory<String, String> kafkaProducer = null;
     private ProducerFactory<String, String> producerFactory() {
         Map<String, Object> configProps = new HashMap<>();
         List<String> servers = new ArrayList<>();
@@ -32,7 +33,13 @@ public class KafkaService {
         return new DefaultKafkaProducerFactory<>(configProps);
     }
 
+    private ProducerFactory<String, String> getProducer() {
+        if (kafkaProducer == null) {
+            kafkaProducer = producerFactory();
+        }
+        return kafkaProducer;
+    }
     public KafkaTemplate<String, String> kafkaTemplate() {
-        return new KafkaTemplate<>(producerFactory());
+        return new KafkaTemplate<>(getProducer());
     }
 }

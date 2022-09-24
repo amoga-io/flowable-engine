@@ -31,7 +31,7 @@ public class AmogaLifecycleListener implements PlanItemInstanceLifecycleListener
                     "\"event\":\" create \"" +
                     "}";
 
-            kafkaService.kafkaTemplate().send("amoga-task-event-topic", planItemInstance.getCaseInstanceId(),event);
+            kafkaService.kafkaTemplate().send("amoga-task-dev-event-topic", planItemInstance.getCaseInstanceId(),event);
         }
     }
 }
