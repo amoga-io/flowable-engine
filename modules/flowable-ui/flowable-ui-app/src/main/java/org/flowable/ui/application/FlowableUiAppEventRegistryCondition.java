@@ -43,6 +43,8 @@ public class FlowableUiAppEventRegistryCondition extends SpringBootCondition
 
     protected Environment environment;
 
+    public static Map<String,String> environmentMap = new HashMap<>();
+
     @Override
     public boolean[] match(String[] autoConfigurationClasses, AutoConfigurationMetadata autoConfigurationMetadata) {
         ConditionEvaluationReport report = ConditionEvaluationReport.find(this.beanFactory);
@@ -110,6 +112,10 @@ public class FlowableUiAppEventRegistryCondition extends SpringBootCondition
 
     @Override
     public void setEnvironment(Environment environment) {
+        environmentMap.put("environment",environment.getProperty("flowable.amoga.environment"));
+        environmentMap.put("rollbarToken",environment.getProperty("flowable.amoga.rollbar.token"));
+        environmentMap.put("kafkaTopic",environment.getProperty("flowable.amoga.kafka.topic"));
+
         this.environment = environment;
     }
 }

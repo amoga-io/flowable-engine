@@ -15,8 +15,9 @@ import java.util.Map;
 @Service
 public class KafkaService {
 
-    private ProducerFactory<String, String> kafkaProducer = null;
-    private ProducerFactory<String, String> producerFactory() {
+    private static ProducerFactory<String, String> kafkaProducer = null;
+    private static KafkaTemplate<String,String> kafkaTemplate = null;
+    private static ProducerFactory<String, String> producerFactory() {
         Map<String, Object> configProps = new HashMap<>();
         List<String> servers = new ArrayList<>();
         servers.add("20.244.13.46:9093");
@@ -33,13 +34,16 @@ public class KafkaService {
         return new DefaultKafkaProducerFactory<>(configProps);
     }
 
-    private ProducerFactory<String, String> getProducer() {
+    private static ProducerFactory<String, String> getProducer() {
         if (kafkaProducer == null) {
             kafkaProducer = producerFactory();
         }
         return kafkaProducer;
     }
-    public KafkaTemplate<String, String> kafkaTemplate() {
-        return new KafkaTemplate<>(getProducer());
+    public static KafkaTemplate<String, String> kafkaTemplate() {
+        if(kafkaTemplate == null) {
+            kafkaTemplate = new KafkaTemplate<>(getProducer());
+        }
+        return kafkaTemplate;
     }
 }

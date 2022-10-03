@@ -13,7 +13,6 @@ import java.util.*;
 @Scope("prototype")
 public class MailTask implements JavaDelegate {
 
-    private MailService mailService = new MailService();
     private FixedValue body;
     private FixedValue header;
     private FixedValue to;
@@ -86,6 +85,6 @@ public class MailTask implements JavaDelegate {
             }
             sentToArray.add(to.trim());
         }
-        mailService.sendEmail(sentToArray.toArray(),mailHeader,mailBody);
+        MailService.sendEmail(sentToArray.toArray(),mailHeader,mailBody);
     }
 }

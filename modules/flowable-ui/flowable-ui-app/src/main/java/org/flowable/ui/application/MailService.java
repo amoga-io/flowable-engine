@@ -11,7 +11,7 @@ import java.util.Map;
 
 public class MailService {
 
-    public void sendEmail(Object[] toAddress,String subject, String htmlBody)
+    public static void sendEmail(Object[] toAddress,String subject, String htmlBody)
     {
         try{
             RestTemplate restTemplate = new RestTemplate();
