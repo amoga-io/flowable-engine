@@ -115,6 +115,7 @@ public class FlowableUiAppEventRegistryCondition extends SpringBootCondition
         environmentMap.put("environment",environment.getProperty("flowable.amoga.environment"));
         environmentMap.put("rollbarToken",environment.getProperty("flowable.amoga.rollbar.token"));
         environmentMap.put("kafkaTopic",environment.getProperty("flowable.amoga.kafka.topic"));
+        environmentMap.put("baseUrl",environment.getProperty("flowable.amoga.mail.url"));
 
         this.environment = environment;
     }
