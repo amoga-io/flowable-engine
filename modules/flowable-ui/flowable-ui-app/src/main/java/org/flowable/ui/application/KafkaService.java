@@ -12,6 +12,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.flowable.ui.application.FlowableUiAppEventRegistryCondition.environmentMap;
+
 @Service
 public class KafkaService {
 
@@ -20,8 +22,9 @@ public class KafkaService {
     private static ProducerFactory<String, String> producerFactory() {
         Map<String, Object> configProps = new HashMap<>();
         List<String> servers = new ArrayList<>();
-        servers.add("20.244.13.46:9093");
-        servers.add("20.244.13.46:9092");
+//        servers.add("20.244.13.46:9093");
+//        servers.add("20.244.13.46:9092");
+        servers.add(environmentMap.get("bootstrapServers"));
         configProps.put(
                 ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,servers);
         configProps.put(
@@ -31,6 +34,12 @@ public class KafkaService {
         configProps.put(
                 ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
                 StringSerializer.class);
+        configProps.put("security.protocol",environmentMap.get("securityProtocol"));
+        configProps.put("sasl.jaas.config",environmentMap.get("saslJaasConfig"));
+        configProps.put("sasl.mechanism",environmentMap.get("saslMechanism"));
+        configProps.put("client.dns.lookup",environmentMap.get("clientDnsLookup"));
+        configProps.put("session.timeout.ms",environmentMap.get("session"));
+        configProps.put("acks",environmentMap.get("acks"));
         return new DefaultKafkaProducerFactory<>(configProps);
     }
 
