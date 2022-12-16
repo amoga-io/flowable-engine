@@ -38,8 +38,12 @@ public class KafkaService {
         configProps.put("sasl.jaas.config",environmentMap.get("saslJaasConfig"));
         configProps.put("sasl.mechanism",environmentMap.get("saslMechanism"));
         configProps.put("client.dns.lookup",environmentMap.get("clientDnsLookup"));
-        configProps.put("session.timeout.ms",environmentMap.get("session"));
-        configProps.put("acks",environmentMap.get("acks"));
+        //configProps.put("session.timeout.ms",environmentMap.get("session"));
+        configProps.put("debug","topic,msg,metadata,broker");
+        configProps.put("topic.metadata.refresh.interval.ms",3600000);
+        configProps.put("socket.keepalive.enable",true);
+        configProps.put("metadata.max.age.ms",180000);
+        configProps.put("connections.max.idle.  ms",180000);
         return new DefaultKafkaProducerFactory<>(configProps);
     }
 

@@ -7,6 +7,7 @@ import org.flowable.task.service.impl.persistence.entity.TaskEntityImpl;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Map;
 import java.util.TimeZone;
 
 import static org.flowable.ui.application.FlowableUiAppEventRegistryCondition.environmentMap;
@@ -21,6 +22,15 @@ public class KafkaEventListener implements TaskListener{
         String parentId = (delegateTask.getProcessInstanceId() != null) ? delegateTask.getProcessInstanceId() : ((TaskEntityImpl) delegateTask).getScopeId();
         String dueDate = (delegateTask.getDueDate() != null) ? df.format(delegateTask.getDueDate()) : null;
         String planItemId = "";
+        String amo_state= (delegateTask.getEventName() == "create")?"active":"completed";
+        //String _outcomes="";
+        Map<String,Object> variables = delegateTask.getVariables();
+        if( "create".equals(delegateTask.getEventName())) {
+            variables.put("_outcome", "toDo");
+        }
+
+        String variable = new JSONObject(variables).toJSONString();
+
         try {
             planItemId = ((TaskEntityImpl) delegateTask).getSubScopeId();
         } catch (Exception e) {
@@ -31,6 +41,7 @@ public class KafkaEventListener implements TaskListener{
                 parentId = delegateTask.getVariable(keyName).toString();
             }
         }
+
         try {
             String event = "{" +
                     "\"id\":\"" + delegateTask.getId() + "\"," +
@@ -40,8 +51,9 @@ public class KafkaEventListener implements TaskListener{
                     "\"tenantId\":\"" + delegateTask.getTenantId() + "\"," +
                     "\"dueDate\":\"" + dueDate + "\"," +
                     "\"name\":\"" + delegateTask.getName() + "\"," +
+                    "\"amo_state\":\""+amo_state+"\","+
                     "\"parent_id\":\"" + parentId + "\"," +
-                    "\"variables\":" + new JSONObject(delegateTask.getVariables()).toJSONString() + "," +
+                    "\"variables\":" + variable + "," +
                     "\"assignee\":\"" + delegateTask.getAssignee() + "\"," +
                     "\"event\":\"" + delegateTask.getEventName() + "\"" +
                     "}";
