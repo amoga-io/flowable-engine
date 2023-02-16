@@ -47,7 +47,7 @@ public class KafkaEventListener implements TaskListener{
                     "\"id\":\"" + delegateTask.getId() + "\"," +
                     "\"planitem_id\":\""+planItemId+"\","+
                     "\"priority\":\"" + delegateTask.getPriority() + "\"," +
-                    "\"task_type\":\"" + delegateTask.getTaskDefinitionKey() + "\"," +
+                    "\"task_type\":\"" + delegateTask.getTaskDefinitionKey().replace("_","").trim()+ "\"," +
                     "\"tenantId\":\"" + delegateTask.getTenantId() + "\"," +
                     "\"dueDate\":\"" + dueDate + "\"," +
                     "\"name\":\"" + delegateTask.getName() + "\"," +

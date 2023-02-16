@@ -65,12 +65,12 @@ public class ValidateTaskBeforeClose implements TaskListener {
                 String st = arr.getJSONObject(i).getString("state");
                 if(o.equals(taskName)&&(getWhenEvent().getExpressionText()).equals("start")){
                     if(st.equals("available")){
-                        throw new RuntimeException("task available state me hai close nahi kna hai");
+                        throw new RuntimeException("Sorry!!can not close this task");
                     }
                 }
                 if(o.equals(taskName)&&(getWhenEvent().getExpressionText()).equals("complete")){
                     if(!st.equals("completed")){
-                        throw new RuntimeException("task complete state me hai close nahi kna hai");
+                        throw new RuntimeException("Sorry!!can not close this task");
                     }
                 }
 
@@ -80,13 +80,11 @@ public class ValidateTaskBeforeClose implements TaskListener {
 
 
         } catch (RuntimeException ex) {
-            throw new RuntimeException("task close nahi kna hai");
+            throw new RuntimeException("Sorry!!can not close this task");
         }
         catch (Exception ex) {
-            System.out.println("Error while sending mail"+ex);
+            System.out.println("Error"+ex);
         }
     }
 
-
-//    }
 }
