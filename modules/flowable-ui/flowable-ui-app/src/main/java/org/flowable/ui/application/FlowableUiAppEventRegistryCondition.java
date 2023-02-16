@@ -43,6 +43,8 @@ public class FlowableUiAppEventRegistryCondition extends SpringBootCondition
 
     protected Environment environment;
 
+    public static Map<String,String> environmentMap = new HashMap<>();
+
     @Override
     public boolean[] match(String[] autoConfigurationClasses, AutoConfigurationMetadata autoConfigurationMetadata) {
         ConditionEvaluationReport report = ConditionEvaluationReport.find(this.beanFactory);
@@ -110,6 +112,18 @@ public class FlowableUiAppEventRegistryCondition extends SpringBootCondition
 
     @Override
     public void setEnvironment(Environment environment) {
+        environmentMap.put("environment",environment.getProperty("flowable.amoga.environment"));
+        environmentMap.put("rollbarToken",environment.getProperty("flowable.amoga.rollbar.token"));
+        environmentMap.put("kafkaTopic",environment.getProperty("flowable.amoga.kafka.topic"));
+        environmentMap.put("baseUrl",environment.getProperty("flowable.amoga.mail.url"));
+        environmentMap.put("bootstrapServers",environment.getProperty("bootstrap.servers"));
+        environmentMap.put("securityProtocol",environment.getProperty("security.protocol"));
+        environmentMap.put("saslJaasConfig",environment.getProperty("sasl.jaas.config"));
+        environmentMap.put("saslMechanism",environment.getProperty("sasl.mechanism"));
+        environmentMap.put("clientDnsLookup",environment.getProperty("client.dns.lookup"));
+        environmentMap.put("session",environment.getProperty("session.timeout.ms"));
+        environmentMap.put("acks",environment.getProperty("acks"));
+
         this.environment = environment;
     }
 }

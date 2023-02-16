@@ -12,14 +12,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.flowable.ui.application.FlowableUiAppEventRegistryCondition.environmentMap;
+
 @Service
 public class KafkaService {
 
-    private ProducerFactory<String, String> producerFactory() {
+    private static ProducerFactory<String, String> kafkaProducer = null;
+    private static KafkaTemplate<String,String> kafkaTemplate = null;
+    private static ProducerFactory<String, String> producerFactory() {
         Map<String, Object> configProps = new HashMap<>();
         List<String> servers = new ArrayList<>();
-        servers.add("20.244.13.46:9093");
-        servers.add("20.244.13.46:9092");
+//        servers.add("20.244.13.46:9093");
+//        servers.add("20.244.13.46:9092");
+        servers.add(environmentMap.get("bootstrapServers"));
         configProps.put(
                 ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,servers);
         configProps.put(
@@ -29,10 +34,29 @@ public class KafkaService {
         configProps.put(
                 ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
                 StringSerializer.class);
+        configProps.put("security.protocol",environmentMap.get("securityProtocol"));
+        configProps.put("sasl.jaas.config",environmentMap.get("saslJaasConfig"));
+        configProps.put("sasl.mechanism",environmentMap.get("saslMechanism"));
+        configProps.put("client.dns.lookup",environmentMap.get("clientDnsLookup"));
+        //configProps.put("session.timeout.ms",environmentMap.get("session"));
+        configProps.put("debug","topic,msg,metadata,broker");
+        configProps.put("topic.metadata.refresh.interval.ms",3600000);
+        configProps.put("socket.keepalive.enable",true);
+        configProps.put("metadata.max.age.ms",180000);
+        configProps.put("connections.max.idle.  ms",180000);
         return new DefaultKafkaProducerFactory<>(configProps);
     }
 
-    public KafkaTemplate<String, String> kafkaTemplate() {
-        return new KafkaTemplate<>(producerFactory());
+    private static ProducerFactory<String, String> getProducer() {
+        if (kafkaProducer == null) {
+            kafkaProducer = producerFactory();
+        }
+        return kafkaProducer;
+    }
+    public static KafkaTemplate<String, String> kafkaTemplate() {
+        if(kafkaTemplate == null) {
+            kafkaTemplate = new KafkaTemplate<>(getProducer());
+        }
+        return kafkaTemplate;
     }
 }

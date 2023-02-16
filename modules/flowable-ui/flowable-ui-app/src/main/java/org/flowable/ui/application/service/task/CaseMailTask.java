@@ -12,7 +12,6 @@ import java.util.Map;
 
 public class CaseMailTask implements CmmnActivityBehavior {
 
-    private MailService mailService = new MailService();
     private FixedValue body;
     private FixedValue header;
     private FixedValue to;
@@ -81,6 +80,6 @@ public class CaseMailTask implements CmmnActivityBehavior {
             }
             sentToArray.add(to.trim());
         }
-        mailService.sendEmail(sentToArray.toArray(),mailHeader,mailBody);
+        MailService.sendEmail(sentToArray.toArray(),mailHeader,mailBody);
     }
 }

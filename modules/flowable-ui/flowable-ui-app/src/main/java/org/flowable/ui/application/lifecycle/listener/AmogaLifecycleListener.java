@@ -5,10 +5,11 @@ import org.flowable.cmmn.api.delegate.DelegatePlanItemInstance;
 import org.flowable.cmmn.api.listener.PlanItemInstanceLifecycleListener;
 import org.flowable.ui.application.KafkaService;
 
+import static org.flowable.ui.application.FlowableUiAppEventRegistryCondition.environmentMap;
+
 
 public class AmogaLifecycleListener implements PlanItemInstanceLifecycleListener {
 
-    KafkaService kafkaService = new KafkaService();
     @Override
     public String getSourceState() {
         return null;
@@ -31,7 +32,7 @@ public class AmogaLifecycleListener implements PlanItemInstanceLifecycleListener
                     "\"event\":\" create \"" +
                     "}";
 
-            kafkaService.kafkaTemplate().send("amoga-task-event-topic", planItemInstance.getCaseInstanceId(),event);
+            KafkaService.kafkaTemplate().send(environmentMap.get("kafkaTopic"), planItemInstance.getCaseInstanceId(),event);
         }
     }
 }
