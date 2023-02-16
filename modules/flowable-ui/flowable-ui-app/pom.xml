@@ -115,7 +115,7 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>42.4.0</version>
+            <version>42.4.3</version>
         </dependency>
         <dependency>
             <groupId>com.rollbar</groupId>
