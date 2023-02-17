@@ -41,13 +41,18 @@ public class KafkaEventListener implements TaskListener{
                 parentId = delegateTask.getVariable(keyName).toString();
             }
         }
+        String task_type=delegateTask.getTaskDefinitionKey();
+
+            while(task_type.endsWith("_")){
+                task_type=task_type.substring(0,task_type.length()-1).trim();
+            }
 
         try {
             String event = "{" +
                     "\"id\":\"" + delegateTask.getId() + "\"," +
                     "\"planitem_id\":\""+planItemId+"\","+
                     "\"priority\":\"" + delegateTask.getPriority() + "\"," +
-                    "\"task_type\":\"" + delegateTask.getTaskDefinitionKey().replace("_","").trim()+ "\"," +
+                    "\"task_type\":\"" + task_type+ "\"," +
                     "\"tenantId\":\"" + delegateTask.getTenantId() + "\"," +
                     "\"dueDate\":\"" + dueDate + "\"," +
                     "\"name\":\"" + delegateTask.getName() + "\"," +
@@ -57,7 +62,7 @@ public class KafkaEventListener implements TaskListener{
                     "\"assignee\":\"" + delegateTask.getAssignee() + "\"," +
                     "\"event\":\"" + delegateTask.getEventName() + "\"" +
                     "}";
-
+                System.out.println(event);
                 KafkaService.kafkaTemplate().send(environmentMap.get("kafkaTopic"),parentId, event);
         } catch (Exception e) {
             System.out.println(e.getMessage());
