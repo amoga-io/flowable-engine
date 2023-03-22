@@ -57,7 +57,7 @@ public class ValidateTaskBeforeClose implements TaskListener {
 
             String response = restTemplate.exchange(baseUrl, HttpMethod.GET, entity, String.class, new Object[0]).getBody();
             JSONObject json = new JSONObject(response);
-            System.out.println(json);
+            //System.out.println(json);
             JSONArray arr=json.getJSONArray("data");
             String taskName=getTaskName().getExpressionText();
             for(int i=0; i<arr.length(); i++){
@@ -75,12 +75,11 @@ public class ValidateTaskBeforeClose implements TaskListener {
                 }
 
             }
-            System.out.println (getTaskName().getExpressionText());
-            System.out.println();
+
 
 
         } catch (RuntimeException ex) {
-            throw new RuntimeException("Sorry!!can not close this task");
+            throw new RuntimeException("outer exception");
         }
         catch (Exception ex) {
             System.out.println("Error"+ex);
