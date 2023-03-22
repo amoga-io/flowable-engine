@@ -39,11 +39,13 @@ public class KafkaService {
         configProps.put("sasl.mechanism",environmentMap.get("saslMechanism"));
         configProps.put("client.dns.lookup",environmentMap.get("clientDnsLookup"));
         //configProps.put("session.timeout.ms",environmentMap.get("session"));
-        configProps.put("debug","topic,msg,metadata,broker");
-        configProps.put("topic.metadata.refresh.interval.ms",3600000);
-        configProps.put("socket.keepalive.enable",true);
-        configProps.put("metadata.max.age.ms",180000);
-        configProps.put("connections.max.idle.  ms",180000);
+        configProps.put("debug",environmentMap.get("debug"));
+        configProps.put("topic.metadata.refresh.interval.ms",environmentMap.get("topicMetadataRefreshIntervalMs"));
+        configProps.put("socket.keepalive.enable",environmentMap.get("socketKeepaliveEnable"));
+        configProps.put("metadata.max.age.ms",environmentMap.get("metadataMaxAgeMs"));
+        configProps.put("connections.max.idle.ms",environmentMap.get("connectionsMaxIdleMs"));
+        configProps.put("request.timeout.ms",environmentMap.get("requestTimeoutMs"));
+        configProps.put("acks",environmentMap.get("acks"));
         return new DefaultKafkaProducerFactory<>(configProps);
     }
 

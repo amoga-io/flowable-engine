@@ -123,6 +123,13 @@ public class FlowableUiAppEventRegistryCondition extends SpringBootCondition
         environmentMap.put("clientDnsLookup",environment.getProperty("client.dns.lookup"));
         environmentMap.put("session",environment.getProperty("session.timeout.ms"));
         environmentMap.put("acks",environment.getProperty("acks"));
+        environmentMap.put("metadataMaxAgeMs",environment.getProperty("metadata.max.age.ms"));
+        environmentMap.put("connectionsMaxIdleMs",environment.getProperty("connections.max.idle.ms"));
+        environmentMap.put("requestTimeoutMs",environment.getProperty("request.timeout.ms"));
+        environmentMap.put("topicMetadataRefreshIntervalMs",environment.getProperty("topic.metadata.refresh.interval.ms"));
+        environmentMap.put("debug",environment.getProperty("debug"));
+        environmentMap.put("socketKeepaliveEnable",environment.getProperty("socket.keepalive.enable"));
+
 
         this.environment = environment;
     }
