@@ -59,6 +59,7 @@ public class KafkaEventListener implements TaskListener{
                     "}";
 
                 KafkaService.kafkaTemplate().send(environmentMap.get("kafkaTopic"),parentId, event);
+                KafkaService.kafkaTemplate().flush();
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
