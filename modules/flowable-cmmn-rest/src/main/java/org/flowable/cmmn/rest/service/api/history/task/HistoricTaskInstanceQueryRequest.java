@@ -75,6 +75,7 @@ public class HistoricTaskInstanceQueryRequest extends PaginateRequest {
     protected Date taskCompletedAfter;
     protected Boolean includeTaskLocalVariables;
     protected Boolean includeProcessVariables;
+    protected Boolean includeCaseVariables;
     protected List<QueryVariable> taskVariables;
     protected String tenantId;
     protected String tenantIdLike;
@@ -451,6 +452,13 @@ public class HistoricTaskInstanceQueryRequest extends PaginateRequest {
         this.includeProcessVariables = includeProcessVariables;
     }
 
+    public Boolean getIncludeCaseVariables() {
+        return includeCaseVariables;
+    }
+
+    public void setIncludeCaseVariables(Boolean includeCaseVariables) {
+        this.includeCaseVariables = includeCaseVariables;
+    }
     @JsonTypeInfo(use = Id.CLASS, defaultImpl = QueryVariable.class)
     public List<QueryVariable> getTaskVariables() {
         return taskVariables;

@@ -242,6 +242,12 @@ public class HistoricTaskInstanceBaseResource {
             }
         }
 
+        if (queryRequest.getIncludeCaseVariables() != null) {
+            if (queryRequest.getIncludeCaseVariables()) {
+                query.includeCaseVariables();
+            }
+        }
+
         if (queryRequest.getTaskVariables() != null) {
             addTaskVariables(query, queryRequest.getTaskVariables());
         }  

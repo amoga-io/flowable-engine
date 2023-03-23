@@ -15,11 +15,7 @@ package org.flowable.rest.service.api.history;
 
 import static org.flowable.common.rest.api.PaginateListUtil.paginateList;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import org.flowable.common.engine.api.FlowableIllegalArgumentException;
 import org.flowable.common.engine.api.FlowableObjectNotFoundException;
@@ -35,6 +31,8 @@ import org.flowable.rest.service.api.BpmnRestApiInterceptor;
 import org.flowable.rest.service.api.RestResponseFactory;
 import org.flowable.rest.service.api.engine.variable.QueryVariable;
 import org.flowable.rest.service.api.engine.variable.QueryVariable.QueryVariableOperation;
+import org.flowable.rest.service.api.engine.variable.RestVariable;
+import org.flowable.task.api.history.HistoricTaskInstanceQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -215,7 +213,43 @@ public class HistoricProcessInstanceBaseResource {
                 }
             }
         }
-        
+
+        if(queryRequest instanceof HistoricProcessInstanceWithTaskQueryRequest){
+            List<HistoricProcessInstanceResponse> processInstanceWithTaskResponseList = new ArrayList<>();
+            for (HistoricProcessInstanceResponse processResponse : responseList.getData()) {
+                HistoricTaskInstanceQuery taskQuery = historyService.createHistoricTaskInstanceQuery();
+                //check for null
+                taskQuery.includeTaskLocalVariables();
+                taskQuery.processInstanceId(processResponse.getId());
+                if(((HistoricProcessInstanceWithTaskQueryRequest) queryRequest).getTaskAssigneeList().size()>0)
+                    taskQuery.taskAssigneeIds(((HistoricProcessInstanceWithTaskQueryRequest) queryRequest).getTaskAssigneeList());
+                //taskQuery.taskCandidateGroup(((HistoricProcessInstanceWithTaskQueryRequest)queryRequest).getTaskCandidateGroup());
+                HistoricProcessInstanceWithTaskResponse historicProcessInstanceWithTaskResponse = new HistoricProcessInstanceWithTaskResponse();
+                List<HistoricTaskInstanceResponse> taskList = restResponseFactory.createHistoricTaskInstanceResponseList(taskQuery.list());
+                for (HistoricTaskInstanceResponse task : taskList){
+                    List<RestVariable> variables = task.getVariables();
+                    task.setVariables(variables);
+                }
+                historicProcessInstanceWithTaskResponse.setTasks(taskList);
+                historicProcessInstanceWithTaskResponse.setId(processResponse.getId());
+                historicProcessInstanceWithTaskResponse.setName(processResponse.getName());
+                historicProcessInstanceWithTaskResponse.setVariables(processResponse.getVariables());
+                historicProcessInstanceWithTaskResponse.setBusinessStatus(processResponse.getBusinessStatus());
+                historicProcessInstanceWithTaskResponse.setBusinessKey(processResponse.getBusinessKey());
+                historicProcessInstanceWithTaskResponse.setProcessDefinitionId(processResponse.getProcessDefinitionId());
+                historicProcessInstanceWithTaskResponse.setProcessDefinitionName(processResponse.getProcessDefinitionName());
+                historicProcessInstanceWithTaskResponse.setStartTime(processResponse.getStartTime());
+                historicProcessInstanceWithTaskResponse.setEndTime(processResponse.getEndTime());
+                historicProcessInstanceWithTaskResponse.setDurationInMillis(processResponse.getDurationInMillis());
+                historicProcessInstanceWithTaskResponse.setStartUserId(processResponse.getStartUserId());
+                historicProcessInstanceWithTaskResponse.setStartActivityId(processResponse.getStartActivityId());
+                historicProcessInstanceWithTaskResponse.setEndActivityId(processResponse.getEndActivityId());
+                historicProcessInstanceWithTaskResponse.setTenantId(processResponse.getTenantId());
+                historicProcessInstanceWithTaskResponse.setCallbackId(processResponse.getCallbackId());
+                processInstanceWithTaskResponseList.add(historicProcessInstanceWithTaskResponse);
+            }
+            responseList.setData(processInstanceWithTaskResponseList);
+        }
         return responseList;
     }
     
