@@ -25,9 +25,9 @@ public class KafkaEventListener implements TaskListener{
         String amo_state= (delegateTask.getEventName() == "create")?"active":"completed";
         //String _outcomes="";
         Map<String,Object> variables = delegateTask.getVariables();
-        if( "create".equals(delegateTask.getEventName())) {
-            variables.put("_outcome", "toDo");
-        }
+//        if( "create".equals(delegateTask.getEventName())) {
+//            variables.put("_outcome", "toDo");
+//        }
 
         String variable = new JSONObject(variables).toJSONString();
 
@@ -59,6 +59,8 @@ public class KafkaEventListener implements TaskListener{
                     "}";
 
                 KafkaService.kafkaTemplate().send(environmentMap.get("kafkaTopic"),parentId, event);
+                KafkaService.kafkaTemplate().send("amoga-staging-mirror-event-topic", parentId,event);
+
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }

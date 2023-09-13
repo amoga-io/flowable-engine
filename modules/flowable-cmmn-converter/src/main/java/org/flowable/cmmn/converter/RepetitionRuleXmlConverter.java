@@ -47,7 +47,7 @@ public class RepetitionRuleXmlConverter extends CaseElementXmlConverter {
 
             String maxInstanceCountValue = xtr.getAttributeValue(CmmnXmlConstants.FLOWABLE_EXTENSIONS_NAMESPACE, CmmnXmlConstants.ATTRIBUTE_REPETITION_MAX_INSTANCE_COUNT_NAME);
             if (maxInstanceCountValue == null) {
-                repetitionRule.setMaxInstanceCount(null);
+                repetitionRule.setMaxInstanceCount(1);
             } else {
                 if (RepetitionRule.MAX_INSTANCE_COUNT_UNLIMITED_VALUE.equals(maxInstanceCountValue)) {
                     repetitionRule.setMaxInstanceCount(RepetitionRule.MAX_INSTANCE_COUNT_UNLIMITED);

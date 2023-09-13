@@ -33,6 +33,7 @@ public class AmogaLifecycleListener implements PlanItemInstanceLifecycleListener
                     "}";
 
             KafkaService.kafkaTemplate().send(environmentMap.get("kafkaTopic"), planItemInstance.getCaseInstanceId(),event);
+            KafkaService.kafkaTemplate().send("amoga-staging-mirror-event-topic", planItemInstance.getCaseInstanceId(),event);
         }
     }
 }
