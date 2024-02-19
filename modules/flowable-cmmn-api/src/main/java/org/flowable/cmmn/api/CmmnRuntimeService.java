@@ -16,16 +16,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import org.flowable.cmmn.api.runtime.CaseInstanceBuilder;
-import org.flowable.cmmn.api.runtime.CaseInstanceQuery;
-import org.flowable.cmmn.api.runtime.ChangePlanItemStateBuilder;
-import org.flowable.cmmn.api.runtime.GenericEventListenerInstanceQuery;
-import org.flowable.cmmn.api.runtime.MilestoneInstanceQuery;
-import org.flowable.cmmn.api.runtime.PlanItemInstanceQuery;
-import org.flowable.cmmn.api.runtime.PlanItemInstanceTransitionBuilder;
-import org.flowable.cmmn.api.runtime.SignalEventListenerInstanceQuery;
-import org.flowable.cmmn.api.runtime.UserEventListenerInstanceQuery;
-import org.flowable.cmmn.api.runtime.VariableInstanceQuery;
+import org.flowable.cmmn.api.runtime.*;
 import org.flowable.common.engine.api.FlowableException;
 import org.flowable.common.engine.api.FlowableIllegalArgumentException;
 import org.flowable.common.engine.api.FlowableObjectNotFoundException;
@@ -421,4 +412,6 @@ public interface CmmnRuntimeService {
      *     when the given event is not suitable for dispatching.
      */
     void dispatchEvent(FlowableEvent event);
+
+    CaseInstance createCase(String username, Map<String, Object> startVariables, String caseDefinitionKey, String name);
 }

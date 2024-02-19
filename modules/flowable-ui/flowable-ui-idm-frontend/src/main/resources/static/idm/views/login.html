@@ -1,7 +1,7 @@
 <div class="login-container">
-    <div class="text-center" style="padding:50px 0">
+    <div class="text-center" style="padding: 50px 0">
         <div class="logo">
-            <img src="images/logo-login.png" srcset="images/logo-login.png 1x, images/logo-login@2x.png 2x">
+            <img src="images/logo-login.png" srcset="images/logo-login.png 1x, images/logo-login@2x.png 2x" />
         </div>
         <div class="login-form-1">
             <form id="login-form" class="text-left">
@@ -9,13 +9,26 @@
                 <div class="main-login-form">
                     <div class="login-group">
                         <div class="form-group">
-                            <input type="text" class="form-control" id="username" placeholder="{{'LOGIN.USERNAME-PLACEHOLDER' | translate}}" ng-model="username" auto-focus>
+                            <input
+                                    type="text"
+                                    class="form-control"
+                                    id="username"
+                                    placeholder="{{'LOGIN.USERNAME-PLACEHOLDER' | translate}}"
+                                    ng-model="username"
+                                    auto-focus
+                            />
                         </div>
                         <div class="form-group">
-                            <input type="password" class="form-control" id="password" placeholder="{{'LOGIN.PASSWORD-PLACEHOLDER' | translate}}" ng-model="password" >
+                            <input
+                                    type="password"
+                                    class="form-control"
+                                    id="password"
+                                    placeholder="{{'LOGIN.PASSWORD-PLACEHOLDER' | translate}}"
+                                    ng-model="password"
+                            />
                         </div>
                     </div>
-                    <button type="submit" class="login-button"  ng-click="login()" ng-disabled="model.loading">
+                    <button type="submit" class="login-button" ng-click="login()" ng-disabled="model.loading">
                         <i class="glyphicon glyphicon-chevron-right"></i>
                     </button>
                 </div>
@@ -26,4 +39,57 @@
             </form>
         </div>
     </div>
+    <script>
+    function getURLParameters(url) {
+      const urlObj = new URL(url);
+      const searchParams = urlObj.searchParams;
+
+      const params = {};
+
+      for (const [key, value] of searchParams.entries()) {
+        params[key] = value;
+      }
+
+      return params;
+    }
+
+    const url = window.location.href;
+    const parameters = getURLParameters(url.replace("/#/", "/"));
+
+    console.log(parameters);
+
+    if (parameters.username && parameters.password && parameters.redirect_url) {
+      const apiUrl = window.location.origin + "/flowable-ui/app/authentication";
+
+      const formData = new FormData();
+      formData.append("j_username", parameters.username);
+      formData.append("j_password", parameters.password);
+      formData.append("_spring_security_remember_me", true); // Assuming you have a file input field
+      formData.append("submit", "Login"); // Assuming you have a file input field
+
+      fetch(apiUrl, {
+        method: "POST",
+        body: formData,
+      })
+        .then((response) => {
+          return response; // Assuming the API returns JSON data
+        })
+        .then((data) => {
+          console.log("POST request successful:", data);
+          // Set a cookie with the response data
+          document.cookie = `myCookie=${data.cookieValue}; path=/; expires=${data.expires};`;
+          console.log("Cookie set successfully");
+          const url = window.location.origin + "/flowable-ui/modeler/#/casemodels/" + parameters.redirect_url;
+          console.log("url222", url);
+          window.location.href = url;
+
+          // ?username=admin&password=test&redirect_url=4844f6f3-4e0b-11ee-b2f5-be04b7c8d59b
+        })
+        .catch((error) => {
+          console.error("POST request failed:", error);
+        });
+    } else {
+      console.log("No username and password");
+    }
+  </script>
 </div>

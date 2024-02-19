@@ -85,6 +85,7 @@ import org.flowable.cmmn.engine.impl.cmd.TriggerPlanItemInstanceCmd;
 import org.flowable.common.engine.api.delegate.event.FlowableEngineEventType;
 import org.flowable.common.engine.api.delegate.event.FlowableEvent;
 import org.flowable.common.engine.api.delegate.event.FlowableEventListener;
+import org.flowable.common.engine.impl.identity.Authentication;
 import org.flowable.common.engine.impl.service.CommonEngineServiceImpl;
 import org.flowable.entitylink.api.EntityLink;
 import org.flowable.eventsubscription.api.EventSubscriptionQuery;
@@ -105,6 +106,17 @@ public class CmmnRuntimeServiceImpl extends CommonEngineServiceImpl<CmmnEngineCo
     @Override
     public CaseInstanceBuilder createCaseInstanceBuilder() {
         return new CaseInstanceBuilderImpl(this);
+    }
+
+    @Override
+    public CaseInstance createCase(String username, Map<String, Object> startVariables, String caseDefinitionKey, String name){
+        System.out.println(Thread.currentThread().getName()+"Hello+++++++");
+        Authentication.setAuthenticatedUserId(username);
+        CaseInstanceBuilder caseInstanceBuilder = createCaseInstanceBuilder();
+        caseInstanceBuilder.variables(startVariables);
+        caseInstanceBuilder.caseDefinitionKey(caseDefinitionKey);
+        caseInstanceBuilder.name(name);
+        return caseInstanceBuilder.start();
     }
 
     @Override
@@ -443,5 +455,6 @@ public class CmmnRuntimeServiceImpl extends CommonEngineServiceImpl<CmmnEngineCo
     public void dispatchEvent(FlowableEvent event) {
         commandExecutor.execute(new DispatchEventCommand(event));
     }
+
 
 }
