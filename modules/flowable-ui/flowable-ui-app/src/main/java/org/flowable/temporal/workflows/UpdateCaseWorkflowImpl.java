@@ -6,8 +6,7 @@ import io.temporal.workflow.Workflow;
 import java.time.Duration;
 import java.util.Map;
 
-public class CreateCaseWorkflowImpl implements  CreateCaseWorkflow {
-
+public class UpdateCaseWorkflowImpl implements UpdateCaseWorkflow{
     ActivityOptions options = ActivityOptions.newBuilder()
             .setStartToCloseTimeout(Duration.ofSeconds(500))
             .setRetryOptions(null)
@@ -15,7 +14,7 @@ public class CreateCaseWorkflowImpl implements  CreateCaseWorkflow {
 
     private final CaseActivities activities = Workflow.newActivityStub(CaseActivities.class, options);
     @Override
-    public String createCase(Map<String,Object> payload) {
-        return activities.createCase(payload);
+    public String updateCase(Map<String,Object> payload) {
+        return activities.updateCase(payload);
     }
 }

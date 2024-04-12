@@ -414,4 +414,5 @@ public interface CmmnRuntimeService {
     void dispatchEvent(FlowableEvent event);
 
     CaseInstance createCase(String username, Map<String, Object> startVariables, String caseDefinitionKey, String name);
+
 }

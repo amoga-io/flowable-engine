@@ -14,11 +14,12 @@ package org.flowable.ui.application;
 
 import io.temporal.client.WorkflowClient;
 import io.temporal.serviceclient.WorkflowServiceStubs;
+import io.temporal.serviceclient.WorkflowServiceStubsOptions;
 import io.temporal.worker.Worker;
 import io.temporal.worker.WorkerFactory;
 import org.flowable.cmmn.api.CmmnRuntimeService;
-import org.flowable.temporal.workflows.CreateCaseActivityImpl;
-import org.flowable.temporal.workflows.CreateCaseWorkflowImpl;
+import org.flowable.cmmn.api.CmmnTaskService;
+import org.flowable.temporal.workflows.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -35,6 +36,9 @@ public class FlowableUiApplication extends SpringBootServletInitializer implemen
     @Autowired
     protected CmmnRuntimeService runtimeService;
 
+    @Autowired
+    protected CmmnTaskService taskService;
+
     public static void main(String[] args) {
         SpringApplication.run(FlowableUiApplication.class, args);
     }
@@ -46,16 +50,20 @@ public class FlowableUiApplication extends SpringBootServletInitializer implemen
 
     @Override
     public void run(String... args) throws Exception {
-        WorkflowServiceStubs service = WorkflowServiceStubs.newLocalServiceStubs();
+        String temporalServerAddress = "57.128.165.20:7233";
+        WorkflowServiceStubsOptions options = WorkflowServiceStubsOptions.newBuilder()
+                .setTarget(temporalServerAddress)
+                .build();
+        WorkflowServiceStubs service = WorkflowServiceStubs.newInstance(options);
         WorkflowClient client = WorkflowClient.newInstance(service);
         WorkerFactory factory = WorkerFactory.newInstance(client);
 
         // Specify the name of the Task Queue that this Worker should poll
-        Worker worker = factory.newWorker("greeting-tasks");
+        Worker worker = factory.newWorker("flowable_queue_local");
 
         // Specify which Workflow implementations this Worker will support
-        worker.registerWorkflowImplementationTypes(CreateCaseWorkflowImpl.class);
-        worker.registerActivitiesImplementations(new CreateCaseActivityImpl(runtimeService));
+        worker.registerWorkflowImplementationTypes(CreateCaseWorkflowImpl.class, UpdateCaseWorkflowImpl.class, CompleteTaskWorkflowImpl.class, DeleteCaseWorkflowImpl.class);
+        worker.registerActivitiesImplementations(new CaseActivityImpl(runtimeService, taskService));
         // Begin running the Worker
         factory.start();
     }

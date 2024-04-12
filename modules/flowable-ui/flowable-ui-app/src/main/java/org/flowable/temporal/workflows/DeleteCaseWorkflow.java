@@ -6,9 +6,7 @@ import io.temporal.workflow.WorkflowMethod;
 import java.util.Map;
 
 @WorkflowInterface
-public interface CreateCaseWorkflow {
-
+public interface DeleteCaseWorkflow {
     @WorkflowMethod
-    String createCase(Map<String, Object> payload);
+    String deleteCase(Map<String, String> payload);
 }
-
