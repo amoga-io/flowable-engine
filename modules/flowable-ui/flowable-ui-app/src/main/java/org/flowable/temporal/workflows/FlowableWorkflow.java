@@ -6,7 +6,7 @@ import io.temporal.workflow.WorkflowMethod;
 import java.util.Map;
 
 @WorkflowInterface
-public interface UpdateCaseWorkflow {
+public interface FlowableWorkflow {
     @WorkflowMethod
-    String updateCase(Map<String, Object> payload);
+    String handleFlowData(Map<String, Object> payload);
 }

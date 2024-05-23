@@ -129,6 +129,8 @@ public class FlowableUiAppEventRegistryCondition extends SpringBootCondition
         environmentMap.put("topicMetadataRefreshIntervalMs",environment.getProperty("topic.metadata.refresh.interval.ms"));
         environmentMap.put("debug",environment.getProperty("debug"));
         environmentMap.put("socketKeepaliveEnable",environment.getProperty("socket.keepalive.enable"));
+        environmentMap.put("temporalServerAddress",environment.getProperty("temporal.server.address"));
+        environmentMap.put("temporalNamespaces",environment.getProperty("temporal.namespaces"));
 
 
         this.environment = environment;

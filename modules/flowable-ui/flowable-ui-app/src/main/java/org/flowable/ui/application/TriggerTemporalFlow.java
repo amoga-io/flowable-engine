@@ -1,6 +1,7 @@
 package org.flowable.ui.application;
 import com.nimbusds.jose.shaded.json.JSONObject;
 import io.temporal.client.WorkflowClient;
+import io.temporal.client.WorkflowClientOptions;
 import io.temporal.client.WorkflowOptions;
 import io.temporal.serviceclient.WorkflowServiceStubs;
 import io.temporal.serviceclient.WorkflowServiceStubsOptions;
@@ -24,16 +25,26 @@ public class TriggerTemporalFlow implements TaskListener{
     @Override
     public void notify(DelegateTask delegateTask) {
         try {
-            String temporalServerAddress = "57.128.165.20:7233";
+//            String temporalServerAddress = "57.128.165.20:7233";
+            String temporalServerAddress = environmentMap.get("temporalServerAddress");
             WorkflowServiceStubsOptions options2 = WorkflowServiceStubsOptions.newBuilder()
                     .setTarget(temporalServerAddress)
                     .build();
-
+            Map<String, Object> variables = delegateTask.getVariables();
+            String temporal_flow_id = (String) variables.get("temporal_flow_id");
+            String amogaEnv = (String) variables.get("amoga_env");
             WorkflowServiceStubs service = WorkflowServiceStubs.newInstance(options2);
-            WorkflowClient workflowClient = WorkflowClient.newInstance(service);
 
+            WorkflowClientOptions clientOptions = WorkflowClientOptions.newBuilder()
+                    .setNamespace(amogaEnv)
+                    .build();
+            WorkflowClient workflowClient = WorkflowClient.newInstance(service,clientOptions);
+
+
+            String queueName = "handle_flowable_queue_"+amogaEnv;
             WorkflowOptions options = WorkflowOptions.newBuilder()
-                    .setTaskQueue("handle_flowable_queue") // Specify the task queue name where your worker is listening
+                    .setTaskQueue(queueName) // Specify the task queue name where your worker is listening
+                    .setWorkflowId("flowable_"+delegateTask.getEventName()+"_task_event_"+temporal_flow_id)
                     .build();
 
             HandleFlowableData workflow = workflowClient.newWorkflowStub(HandleFlowableData.class, options);
@@ -45,7 +56,7 @@ public class TriggerTemporalFlow implements TaskListener{
             String dueDate = (delegateTask.getDueDate() != null) ? df.format(delegateTask.getDueDate()) : null;
             String planItemId = "";
             String amo_state = (delegateTask.getEventName() == "create") ? "active" : "completed";
-            Map<String, Object> variables = delegateTask.getVariables();
+
 
             String variable = new JSONObject(variables).toJSONString();
 

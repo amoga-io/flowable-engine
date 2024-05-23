@@ -41,13 +41,21 @@ public class CaseActivityImpl implements CaseActivities{
     }
 
     @Override
-    public String completeTask(String taskId) {
-        if(taskId != null) {
-            taskService.complete(taskId);
+    public String updateAndCompleteTask(Map<String, Object> payload) {
+        String workflowInstanceID = (String)payload.get("workflow_instance_id");
+        String instanceId = (String)payload.get("workflow_id");
+        if(workflowInstanceID != null) {
+            Map<String, Object> variablesToSet = (Map<String, Object>) payload.get("variables");
+            runtimeService.setVariables(workflowInstanceID, variablesToSet);
+        } else {
+            return "workflow_instance_id required";
+        }
+        if(instanceId != null) {
+            taskService.complete(instanceId);
         } else {
             return "workflow_id required";
         }
-        return "Task with id "+taskId+" completed.";
+        return "Task with id: "+instanceId+" completed.";
     }
 
     @Override

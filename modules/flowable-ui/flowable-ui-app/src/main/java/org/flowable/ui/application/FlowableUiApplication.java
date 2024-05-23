@@ -13,6 +13,7 @@
 package org.flowable.ui.application;
 
 import io.temporal.client.WorkflowClient;
+import io.temporal.client.WorkflowClientOptions;
 import io.temporal.serviceclient.WorkflowServiceStubs;
 import io.temporal.serviceclient.WorkflowServiceStubsOptions;
 import io.temporal.worker.Worker;
@@ -26,6 +27,11 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+
+import java.util.Arrays;
+import java.util.List;
+
+import static org.flowable.ui.application.FlowableUiAppEventRegistryCondition.environmentMap;
 
 /**
  * @author Filip Hrisafov
@@ -50,21 +56,31 @@ public class FlowableUiApplication extends SpringBootServletInitializer implemen
 
     @Override
     public void run(String... args) throws Exception {
-        String temporalServerAddress = "57.128.165.20:7233";
+        String temporalServerAddress = environmentMap.get("temporalServerAddress");
+//        String temporalServerAddress = "57.128.165.20:7233";
         WorkflowServiceStubsOptions options = WorkflowServiceStubsOptions.newBuilder()
                 .setTarget(temporalServerAddress)
                 .build();
         WorkflowServiceStubs service = WorkflowServiceStubs.newInstance(options);
-        WorkflowClient client = WorkflowClient.newInstance(service);
-        WorkerFactory factory = WorkerFactory.newInstance(client);
+        String temporalNamespaces = environmentMap.get("temporalNamespaces");
+        List<String> temporalNamespacesList = Arrays.asList(temporalNamespaces.split(","));
+        for (String namespace : temporalNamespacesList) {
 
-        // Specify the name of the Task Queue that this Worker should poll
-        Worker worker = factory.newWorker("flowable_queue_local");
 
-        // Specify which Workflow implementations this Worker will support
-        worker.registerWorkflowImplementationTypes(CreateCaseWorkflowImpl.class, UpdateCaseWorkflowImpl.class, CompleteTaskWorkflowImpl.class, DeleteCaseWorkflowImpl.class);
-        worker.registerActivitiesImplementations(new CaseActivityImpl(runtimeService, taskService));
-        // Begin running the Worker
-        factory.start();
+            WorkflowClientOptions clientOptions = WorkflowClientOptions.newBuilder()
+                    .setNamespace(namespace)
+                    .build();
+            WorkflowClient client = WorkflowClient.newInstance(service, clientOptions);
+            WorkerFactory factory = WorkerFactory.newInstance(client);
+
+            // Specify the name of the Task Queue that this Worker should poll
+            Worker worker = factory.newWorker("flowable_queue_"+namespace);
+
+            // Specify which Workflow implementations this Worker will support
+            worker.registerWorkflowImplementationTypes(FlowableWorkflowImpl.class);
+            worker.registerActivitiesImplementations(new CaseActivityImpl(runtimeService, taskService));
+            // Begin running the Worker
+            factory.start();
+        }
     }
 }

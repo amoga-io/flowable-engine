@@ -11,7 +11,7 @@ public interface CaseActivities {
 
     public String updateCase(Map<String,Object> payload);
 
-    public String completeTask(String caseInstanceId);
+    public String updateAndCompleteTask(Map<String, Object> payload);
 
     public String deleteCase(String caseInstanceId);
 

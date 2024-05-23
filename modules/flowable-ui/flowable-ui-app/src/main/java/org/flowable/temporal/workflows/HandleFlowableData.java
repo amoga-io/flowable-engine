@@ -10,5 +10,5 @@ import java.util.Map;
 public interface HandleFlowableData {
     @WorkflowMethod
     @Async
-    String handle_flowable_data(Map<String, Object> payload);
+    void handle_flowable_data(Map<String, Object> payload);
 }
