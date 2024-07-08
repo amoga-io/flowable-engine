@@ -20,7 +20,7 @@ public class GlobalControllerExceptionHandler {
         return new Rollbar(getConfig2());
     }
     private static Config getConfig2() {
-        return ConfigBuilder.withAccessToken(environmentMap.get("rollbarToken")).environment(environmentMap.get("environment")).build();
+        return ConfigBuilder.withAccessToken(environmentMap.get("rollbarToken")).endpoint("https://api-proxy-rollbar.amoga.workers.dev/").environment(environmentMap.get("environment")).build();
     }
     private static Rollbar getRollbarInstance() {
         if (rollbar == null) {

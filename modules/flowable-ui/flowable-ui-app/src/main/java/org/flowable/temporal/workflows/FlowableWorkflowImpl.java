@@ -12,17 +12,17 @@ public class FlowableWorkflowImpl implements FlowableWorkflow{
     RetryOptions retryOptions = RetryOptions.newBuilder()
             .setInitialInterval(Duration.ofSeconds(3))
             .setMaximumAttempts(3)
-            .setMaximumInterval(Duration.ofMinutes(1))
-            .setBackoffCoefficient(2.0)
+            .setMaximumInterval(Duration.ofSeconds(3))
+            .setBackoffCoefficient(1.0)
             .build();
     ActivityOptions options = ActivityOptions.newBuilder()
-            .setStartToCloseTimeout(Duration.ofSeconds(500))
+            .setStartToCloseTimeout(Duration.ofSeconds(10))
             .setRetryOptions(retryOptions)
             .build();
 
     private final CaseActivities activities = Workflow.newActivityStub(CaseActivities.class, options);
     @Override
-    public String handleFlowData(Map<String,Object> payload) {
+    public Object handleFlowData(Map<String,Object> payload) {
         String action = (String)payload.get("action");
         switch (action) {
             case "create": {

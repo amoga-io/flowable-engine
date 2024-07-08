@@ -18,9 +18,14 @@ import io.temporal.serviceclient.WorkflowServiceStubs;
 import io.temporal.serviceclient.WorkflowServiceStubsOptions;
 import io.temporal.worker.Worker;
 import io.temporal.worker.WorkerFactory;
+import io.temporal.worker.WorkerFactoryOptions;
+import io.temporal.worker.WorkerOptions;
 import org.flowable.cmmn.api.CmmnRuntimeService;
 import org.flowable.cmmn.api.CmmnTaskService;
-import org.flowable.temporal.workflows.*;
+import org.flowable.temporal.workflows.BulkActivitiesImpl;
+import org.flowable.temporal.workflows.CaseActivityImpl;
+import org.flowable.temporal.workflows.FlowableWorkflowBulkImpl;
+import org.flowable.temporal.workflows.FlowableWorkflowImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -65,22 +70,33 @@ public class FlowableUiApplication extends SpringBootServletInitializer implemen
         String temporalNamespaces = environmentMap.get("temporalNamespaces");
         List<String> temporalNamespacesList = Arrays.asList(temporalNamespaces.split(","));
         for (String namespace : temporalNamespacesList) {
+            this.startWorker(namespace, service, false);
+            this.startWorker(namespace, service, true);
 
-
-            WorkflowClientOptions clientOptions = WorkflowClientOptions.newBuilder()
-                    .setNamespace(namespace)
-                    .build();
-            WorkflowClient client = WorkflowClient.newInstance(service, clientOptions);
-            WorkerFactory factory = WorkerFactory.newInstance(client);
-
-            // Specify the name of the Task Queue that this Worker should poll
-            Worker worker = factory.newWorker("flowable_queue_"+namespace);
-
-            // Specify which Workflow implementations this Worker will support
-            worker.registerWorkflowImplementationTypes(FlowableWorkflowImpl.class);
-            worker.registerActivitiesImplementations(new CaseActivityImpl(runtimeService, taskService));
-            // Begin running the Worker
-            factory.start();
+//            WorkflowClientOptions clientOptions = WorkflowClientOptions.newBuilder().setNamespace(namespace).build();
+//            WorkflowClient client = WorkflowClient.newInstance(service, clientOptions);
+//            WorkerFactory factory = WorkerFactory.newInstance(client);
+//            Worker worker = factory.newWorker("flowable_bulk_queue_" + namespace);
+//            worker.registerWorkflowImplementationTypes(FlowableWorkflowBulkImpl.class);
+//            worker.registerActivitiesImplementations(new Object[]{new BulkActivitiesImpl(this.runtimeService, this.taskService)});
+//            factory.start();
         }
+//        this.startWorker((String)FlowableUiAppEventRegistryCondition.environmentMap.get("temporalBulkNamespace"), service, FlowableWorkflowBulkImpl.class);
+    }
+
+    private void startWorker(String namespace, WorkflowServiceStubs service, boolean is_bulk) throws Exception {
+        WorkflowClientOptions clientOptions = WorkflowClientOptions.newBuilder().setNamespace(namespace).build();
+        WorkflowClient client = WorkflowClient.newInstance(service, clientOptions);
+        WorkerFactory factory = WorkerFactory.newInstance(client);
+        if (is_bulk) {
+            Worker worker = factory.newWorker("flowable_bulk_queue_" + namespace);
+            worker.registerWorkflowImplementationTypes(FlowableWorkflowBulkImpl.class);
+            worker.registerActivitiesImplementations(new Object[]{new BulkActivitiesImpl(this.runtimeService, this.taskService)});
+        } else {
+            Worker worker = factory.newWorker("flowable_queue_" + namespace);
+            worker.registerWorkflowImplementationTypes(FlowableWorkflowImpl.class);
+            worker.registerActivitiesImplementations(new Object[]{new CaseActivityImpl(this.runtimeService, this.taskService)});
+        }
+        factory.start();
     }
 }

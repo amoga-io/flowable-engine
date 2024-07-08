@@ -2,9 +2,7 @@ package org.flowable.temporal.workflows;
 import org.flowable.cmmn.api.CmmnRuntimeService;
 import org.flowable.cmmn.api.CmmnTaskService;
 import org.flowable.cmmn.api.runtime.CaseInstance;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.HashMap;
 import java.util.Map;
 public class CaseActivityImpl implements CaseActivities{
 
@@ -15,16 +13,13 @@ public class CaseActivityImpl implements CaseActivities{
         this.taskService = taskService;
     }
 
-//    @Autowired
-//    protected CmmnRuntimeService runtimeService;
     @Override
     public String createCase(Map<String,Object> payload) {
-        System.out.println(Thread.currentThread().getName()+"=====new Thread");
-        Object caseDefinationKey = payload.get("caseDefinitionKey");
-//        String name = payload.get("name");
+//        System.out.println(Thread.currentThread().getName()+"=====new Thread");
+        Object caseDefinitionKey = payload.get("caseDefinitionKey");
         Object username = payload.get("username");
         Map<String, Object> startVariables = (Map<String, Object>) payload.get("variables");
-        CaseInstance createdCase = runtimeService.createCase(username.toString(), startVariables, caseDefinationKey.toString(), "from temporal");
+        CaseInstance createdCase = runtimeService.createCase(username.toString(), startVariables, caseDefinitionKey.toString(), "from temporal");
         return createdCase.getId();
     }
 

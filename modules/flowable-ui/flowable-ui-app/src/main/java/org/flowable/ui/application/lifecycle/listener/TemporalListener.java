@@ -2,6 +2,7 @@ package org.flowable.ui.application.lifecycle.listener;
 
 import com.nimbusds.jose.shaded.json.JSONObject;
 import io.temporal.client.WorkflowClient;
+import io.temporal.client.WorkflowClientOptions;
 import io.temporal.client.WorkflowOptions;
 import io.temporal.serviceclient.WorkflowServiceStubs;
 import io.temporal.serviceclient.WorkflowServiceStubsOptions;
@@ -9,6 +10,7 @@ import org.flowable.cmmn.api.delegate.DelegatePlanItemInstance;
 import org.flowable.cmmn.api.listener.PlanItemInstanceLifecycleListener;
 import org.flowable.temporal.workflows.HandleFlowableData;
 import org.flowable.ui.application.KafkaService;
+import org.flowable.ui.application.TemporalClientSingleton;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -33,24 +35,17 @@ public class TemporalListener implements PlanItemInstanceLifecycleListener {
 //            String temporalServerAddress = "57.128.165.20:7233";
             String temporalServerAddress = environmentMap.get("temporalServerAddress");
 
-
-            WorkflowServiceStubsOptions options2 = WorkflowServiceStubsOptions.newBuilder()
-                    .setTarget(temporalServerAddress)
-                    .build();
             Map<String, Object> variables = planItemInstance.getVariables();
             String temporal_flow_id = (String) variables.get("temporal_flow_id");
             String amogaEnv = (String) variables.get("amoga_env");
-            String queueName = "handle_flowable_queue_"+amogaEnv;
+            if(amogaEnv == null) {
+                return;
+            }
 
-            WorkflowServiceStubs service = WorkflowServiceStubs.newInstance(options2);
-            WorkflowClient workflowClient = WorkflowClient.newInstance(service);
+            String workflowId = "flowable_create_event_" + temporal_flow_id;
+            TemporalClientSingleton clientSingleton = TemporalClientSingleton.getInstance();
 
-            WorkflowOptions options = WorkflowOptions.newBuilder()
-                    .setTaskQueue(queueName) // Specify the task queue name where your worker is listening
-                    .setWorkflowId("flowable_create_event_"+temporal_flow_id)
-                    .build();
-
-            HandleFlowableData workflow = workflowClient.newWorkflowStub(HandleFlowableData.class, options);
+            clientSingleton.getWorkflowClient(temporalServerAddress, amogaEnv);
 
             Map<String, Object> data = new HashMap<>();
             data.put("id", planItemInstance.getCaseInstanceId());
@@ -59,7 +54,7 @@ public class TemporalListener implements PlanItemInstanceLifecycleListener {
             data.put("variables", new JSONObject(planItemInstance.getVariables()).toJSONString());
             data.put("event", "create");
             try {
-                workflow.handle_flowable_data(data);
+                clientSingleton.startWorkflowAsync(amogaEnv, workflowId, data);
             } catch (Exception e) {
                 System.out.println(e.getMessage());
             }

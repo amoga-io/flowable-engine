@@ -2,6 +2,8 @@ package org.flowable.temporal.workflows;
 
 import io.temporal.activity.ActivityInterface;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @ActivityInterface
