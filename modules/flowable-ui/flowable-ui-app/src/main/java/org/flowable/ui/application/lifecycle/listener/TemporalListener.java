@@ -14,6 +14,7 @@ import org.flowable.ui.application.TemporalClientSingleton;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 import static org.flowable.ui.application.FlowableUiAppEventRegistryCondition.environmentMap;
 
@@ -42,7 +43,10 @@ public class TemporalListener implements PlanItemInstanceLifecycleListener {
                 return;
             }
 
-            String workflowId = "flowable_create_event_" + temporal_flow_id;
+            Random number = new Random();
+            int random_int = number.nextInt(1000);
+            int random_int2 = number.nextInt(1000);
+            String workflowId = "flowable_create_case_event_"+random_int+"_"+random_int2+"_"+ temporal_flow_id;
             TemporalClientSingleton clientSingleton = TemporalClientSingleton.getInstance();
 
             clientSingleton.getWorkflowClient(temporalServerAddress, amogaEnv);

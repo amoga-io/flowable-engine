@@ -30,8 +30,10 @@ public class BulkActivitiesImpl implements BulkActivities {
                 Map<String, Object> startVariables = (Map<String, Object>) payload.get("variables");
                 CaseInstance createdCase = runtimeService.createCase(username.toString(), startVariables, caseDefinitionKey.toString(), "from temporal");
                 createdCases.add(createdCase.getId());
+                Thread.sleep(100);
             } catch (Exception exp) {
                 failedCount = failedCount+1;
+                continue;
             }
             successCount = successCount +1;
         }
@@ -52,11 +54,14 @@ public class BulkActivitiesImpl implements BulkActivities {
                 try {
                     Map<String, Object> variablesToSet = (Map<String, Object>) payload.get("variables");
                     runtimeService.setVariables(instanceId, variablesToSet);
+                    Thread.sleep(100);
                 } catch (Exception exp) {
                     failedCount = failedCount+1;
+                    continue;
                 }
             } else {
                 failedCount = failedCount+1;
+                continue;
             }
             successCount = successCount+1;
         }
@@ -80,14 +85,18 @@ public class BulkActivitiesImpl implements BulkActivities {
                     runtimeService.setVariables(workflowInstanceID, variablesToSet);
                 } else {
                     failedCount = failedCount + 1;
+                    continue;
                 }
                 if (instanceId != null) {
                     taskService.complete(instanceId);
+                    Thread.sleep(100);
                 } else {
                     failedCount = failedCount + 1;
+                    continue;
                 }
             } catch (Exception exp){
                 failedCount = failedCount+1;
+                continue;
             }
             successCount = successCount+1;
         }

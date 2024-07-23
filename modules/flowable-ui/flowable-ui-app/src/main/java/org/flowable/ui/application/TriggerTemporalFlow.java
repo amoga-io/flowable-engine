@@ -28,7 +28,8 @@ public class TriggerTemporalFlow implements TaskListener{
             }
             Random number = new Random();
             int random_int = number.nextInt(1000);
-            String workflowId = "flowable_"+delegateTask.getEventName()+"_task_event_"+random_int+temporal_flow_id;
+            int random_int2 = number.nextInt(1000);
+            String workflowId = "flowable_"+delegateTask.getEventName()+"_task_event_"+random_int2+"_"+random_int+"_"+temporal_flow_id;
 
             TemporalClientSingleton clientSingleton = TemporalClientSingleton.getInstance();
             clientSingleton.getWorkflowClient(temporalServerAddress, amogaEnv);
