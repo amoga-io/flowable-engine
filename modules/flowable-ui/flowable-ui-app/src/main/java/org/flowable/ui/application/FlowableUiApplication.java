@@ -89,11 +89,13 @@ public class FlowableUiApplication extends SpringBootServletInitializer implemen
         WorkflowClient client = WorkflowClient.newInstance(service, clientOptions);
         WorkerFactory factory = WorkerFactory.newInstance(client);
         if (is_bulk) {
-            Worker worker = factory.newWorker("flowable_bulk_queue_" + namespace);
+            String temporalBulkQueueName = environmentMap.get("temporalBulkQueueName");
+            Worker worker = factory.newWorker(temporalBulkQueueName + namespace);
             worker.registerWorkflowImplementationTypes(FlowableWorkflowBulkImpl.class);
             worker.registerActivitiesImplementations(new Object[]{new BulkActivitiesImpl(this.runtimeService, this.taskService)});
         } else {
-            Worker worker = factory.newWorker("flowable_queue_" + namespace);
+            String temporalQueueName = environmentMap.get("temporalQueueName");
+            Worker worker = factory.newWorker(temporalQueueName + namespace);
             worker.registerWorkflowImplementationTypes(FlowableWorkflowImpl.class);
             worker.registerActivitiesImplementations(new Object[]{new CaseActivityImpl(this.runtimeService, this.taskService)});
         }

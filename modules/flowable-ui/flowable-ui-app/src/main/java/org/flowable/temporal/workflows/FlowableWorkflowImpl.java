@@ -10,13 +10,14 @@ import java.util.Map;
 public class FlowableWorkflowImpl implements FlowableWorkflow{
 
     RetryOptions retryOptions = RetryOptions.newBuilder()
-            .setInitialInterval(Duration.ofSeconds(3))
-            .setMaximumAttempts(3)
-            .setMaximumInterval(Duration.ofSeconds(3))
-            .setBackoffCoefficient(1.0)
+            .setInitialInterval(Duration.ofSeconds(2))
+            .setMaximumAttempts(5)
+            .setMaximumInterval(Duration.ofSeconds(10))
+            .setBackoffCoefficient(2.0)
+            .setDoNotRetry("FlowableObjectNotFoundException")
             .build();
     ActivityOptions options = ActivityOptions.newBuilder()
-            .setStartToCloseTimeout(Duration.ofSeconds(10))
+            .setStartToCloseTimeout(Duration.ofSeconds(30))
             .setRetryOptions(retryOptions)
             .build();
 

@@ -21,7 +21,7 @@ public class FlowableWorkflowBulkImpl implements FlowableWorkflowBulk{
 
     private final BulkActivities activities = Workflow.newActivityStub(BulkActivities.class, options);
     @Override
-    public Map<String,Integer> handleFlowBulkData(Map<String, Object> payload) {
+    public Map<String,Object> handleFlowBulkData(Map<String, Object> payload) {
         String action = (String)payload.get("action");
         switch (action) {
             case "create_bulk": {

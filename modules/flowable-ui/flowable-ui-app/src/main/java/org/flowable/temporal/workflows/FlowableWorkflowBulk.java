@@ -9,5 +9,5 @@ import java.util.Map;
 @WorkflowInterface
 public interface FlowableWorkflowBulk {
     @WorkflowMethod
-    Map<String,Integer> handleFlowBulkData(Map<String, Object> payload);
+    Map<String,Object> handleFlowBulkData(Map<String, Object> payload);
 }
