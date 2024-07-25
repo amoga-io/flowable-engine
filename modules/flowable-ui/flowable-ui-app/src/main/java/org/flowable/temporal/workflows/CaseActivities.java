@@ -17,5 +17,7 @@ public interface CaseActivities {
 
     public String deleteCase(String caseInstanceId);
 
+    public String createTask(Map<String,Object> payload);
+
 
 }

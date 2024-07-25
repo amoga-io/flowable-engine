@@ -3,6 +3,8 @@ import org.flowable.cmmn.api.CmmnRuntimeService;
 import org.flowable.cmmn.api.CmmnTaskService;
 import org.flowable.cmmn.api.runtime.CaseInstance;
 import io.temporal.failure.ApplicationFailure;
+import org.flowable.cmmn.api.runtime.PlanItemInstance;
+import org.flowable.cmmn.api.runtime.PlanItemInstanceState;
 import org.flowable.common.engine.api.FlowableObjectNotFoundException;
 
 import java.util.Map;
@@ -85,5 +87,23 @@ public class CaseActivityImpl implements CaseActivities{
             return "workflow_instance_id required";
         }
         return "Case with id "+caseInstanceId+" deleted.";
+    }
+
+    @Override
+    public String createTask(Map<String, Object> payload) {
+        String instanceId = (String)payload.get("workflow_instance_id");
+        String task_type = (String)payload.get("task_type");
+        if(instanceId != null && task_type != null) {
+            PlanItemInstance planItemInstanceId = runtimeService.createPlanItemInstanceQuery()
+                    .caseInstanceId(instanceId)
+                    .planItemDefinitionId(task_type)
+                    .planItemInstanceState(PlanItemInstanceState.ENABLED).singleResult();
+            if (planItemInstanceId != null) {
+                runtimeService.startPlanItemInstance(planItemInstanceId.getId());
+            } else {
+                throw ApplicationFailure.newNonRetryableFailure("task_type or instance_id not Correct. check task_type is in enable mode","FlowableObjectNotFoundException");
+            }
+        }
+        return null;
     }
 }

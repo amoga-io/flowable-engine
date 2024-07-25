@@ -38,6 +38,9 @@ public class FlowableWorkflowImpl implements FlowableWorkflow{
             case "update_complete": {
                 return activities.updateAndCompleteTask(payload);
             }
+            case "create_task" : {
+                return activities.createTask(payload);
+            }
             default: {
                 return action + " Not Supported. supported actions are: create, update, delete, complete";
             }
